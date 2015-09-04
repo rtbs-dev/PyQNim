@@ -21,7 +21,8 @@ class Nim:
     def play(self):
         player=self.p1
         # print 'There are ', self.state, 'sticks to pick up'
-
+        self.p1.games_played+=1
+        self.p2.games_played+=1
         while True:
 
             if self.state==1:

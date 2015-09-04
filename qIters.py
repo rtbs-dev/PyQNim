@@ -16,6 +16,7 @@ def Brain_Show(Q, dim, ax):
     if ax is None:
         fig = plt.figure()
         ax=fig.add_subplot(111)
+        
     plt.ion()
     plt.show
 
@@ -40,7 +41,9 @@ def run_Q(game, trials, anim=True):
         fig = plt.figure()
         ax1 = fig.add_subplot(211)
         ax2 = fig.add_subplot(212)
-
+        text = plt.figtext(0.5, 0.5, "Start", 
+                           horizontalalignment='center',
+                           verticalalignment='center')
     for i in range(trials):
         game.reset()
         game.play()
@@ -49,3 +52,5 @@ def run_Q(game, trials, anim=True):
                 Brain_Show(game.p1.Q, (3, game.reset_val), ax1)
             if game.p2.playertype == 'Q':
                 Brain_Show(game.p2.Q, (3, game.reset_val), ax2)
+            text.set_text("P1 games played.: {0}".format(game.p1.games_played)+\
+                         "\nP2 games played.: {0}".format(game.p2.games_played))

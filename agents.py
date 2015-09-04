@@ -6,18 +6,21 @@ class Human:
     def __init__(self, name, playertype='human'):
         self.str = name
         self.playertype = playertype
+        self.games_played=0
 
 
 class Rando:
     def __init__(self, name, playertype='random'):
         self.str = name
         self.playertype = playertype
+        self.games_played=0
 
 
 class Perfect:
     def __init__(self, name, playertype='perfect'):
         self.str = name
         self.playertype = playertype
+        self.games_played=0
 
 
 class Q_bot:
@@ -25,6 +28,7 @@ class Q_bot:
         self.str = name
         self.playertype = playertype
         self.Q = {}
+        self.games_played=0
 
     def take_action(self, state, valids):
         eps = np.random.rand(1)
