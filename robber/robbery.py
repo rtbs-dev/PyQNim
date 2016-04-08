@@ -71,7 +71,9 @@ class Robbery:
             # print 'player {0} made move '.format(player.str), move
             if np.min(move) == -1:  # being robbed...defector
                 self.blocked = np.argmin(move)
-            self.state = tuple(np.add(self.state, move))
+            self.state = np.add(self.state, move)
+            self.state[self.state < 0] = 0
+            self.state = tuple(self.state)
 
             for agent in self.playlist:
                 offset = agent.order - player.order
@@ -84,6 +86,8 @@ class Robbery:
 
     def one_round(self):
         for i in self.playlist:
+            if np.any([self.win(j) for j in range(self.num_p)]):
+                break
             self.take_turn(i)
 
     def play(self):
