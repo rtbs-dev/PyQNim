@@ -16,7 +16,7 @@ class Robbery:
 
 
     def loss(self, player_no):
-        conds = [i >= 10 for i in self.state]
+        conds = [i >= 3 for i in self.state]
         del conds[player_no]
         if any(conds):
             return True
@@ -24,7 +24,7 @@ class Robbery:
             return False
 
     def win(self, player_no):
-        if self.state[player_no] >= 10:
+        if self.state[player_no] >= 3:
             return True
         else:
             return False
@@ -37,7 +37,7 @@ class Robbery:
         # p = (np.array([1, 2, 3, 4, 5, 5, 4, 3, 2, 1]) / 36.).mean()
         p = 0.0834
         # har = np.array([np.random.binomial(i, .084) for i in self.civ_size()])
-        har = np.random.binomial(3, .084, size=4)
+        har = np.random.binomial(2, .084, size=self.num_p)
         if self.blocked is not None:
             har[self.blocked] = 0
             # print 'thief is blocking Player {0}'.format(self.blocked)
@@ -56,7 +56,12 @@ class Robbery:
             move[j] = 1
             move[i] = -1
             moves += [move]
-        return np.array(moves)
+        mask = np.logical_or(np.array(self.state) != 0, np.array(moves)[:, j] == 0)
+        mask[j] = True
+        # print np.min()
+        # print player_no
+        # print np.array(moves), self.state, mask
+        return np.array(moves)[mask]
 
     def take_turn(self, player):
 
@@ -75,14 +80,17 @@ class Robbery:
             self.state[self.state < 0] = 0
             self.state = tuple(self.state)
 
+            # player.update_Q(self.state, move, valids,
+            #                 self.win(player.order),
+            #                 self.loss(player.order))
             for agent in self.playlist:
                 offset = agent.order - player.order
                 rmove = tuple(np.roll(move, offset))
                 rstate = tuple(np.roll(self.state, offset))
                 rvalids = np.roll(valids, offset, axis=1)
                 agent.update_Q(rstate, rmove, rvalids,
-                               self.win(agent.order),
-                               self.loss(agent.order))
+                               self.win(player.order),
+                               self.loss(player.order))
 
     def one_round(self):
         for i in self.playlist:
