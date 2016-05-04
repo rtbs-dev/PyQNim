@@ -7,7 +7,7 @@ class Agent:
 
     agent_list = {}
 
-    def __init__(self, name, params=(.45, .8)):
+    def __init__(self, name, params=(1., .5)):
         self.order = len(Agent.agent_list.values())
         self.str = name
         self.Q = {}
@@ -29,7 +29,7 @@ class Agent:
     def take_action(self, state, valid_acts):
         # SOFT-MAX #
         # -------- #
-        tau = 1.0
+        tau = 100.
         self.make_key(state, valid_acts)
         try:
             ex = np.exp(np.array([self.Q[state][tuple(i)] for i in valid_acts])/tau)
@@ -70,7 +70,8 @@ class Agent:
         win_check, lose_check = conds
 
         old_state = tuple(np.subtract(state, move))
-        reward = 0.
+
+        # reward = 0.
         self.make_key(state, valids)
         self.make_key(old_state, valids)
 
@@ -82,21 +83,21 @@ class Agent:
             # print self.Q[old_state][move]
             self.games_played +=1
             self.wins += 1
-            reward = 1.
+            reward = 6. / np.where(np.array(state) == np.max(state))[0].size  # split btw. winners
             self.Q[old_state][move] = (self.Q[old_state][move] +
                                           self.alpha * (reward +
                                                    self.Q[old_state][move]))
             # print self.Q[old_state][move]
         elif lose_check:
             self.games_played += 1
-            reward = -1.
+            reward = -6.
             # print state+move, move
             self.Q[old_state][move] = (self.Q[old_state][move] +
                                        self.alpha * (reward -
                                                      self.Q[old_state][move]))
         else:
             self.Q[old_state][move] = (self.Q[old_state][move] +
-                                       self.alpha * (reward -
+                                       self.alpha * (
                                                      self.gamma * self.Q[state][max(self.Q[state],
                                                                                     key=self.Q[state].get)] -
                                                      self.Q[old_state][move]))
